@@ -7,20 +7,17 @@ const reservationRoutes = require('./routes/reservationRoutes');
 
 const app = express();
 
-// Enable CORS for the frontend URL
-const allowedOrigins = ['https://available-gateways-frontend-51573bdecab0.herokuapp.com'];
+// Enable CORS with specific frontend origin
 app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    }
+    origin: 'https://available-gateways-frontend-51573bdecab0.herokuapp.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 
 app.use(express.json());
 
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/gateways', gatewayRoutes);
 app.use('/api/reservations', reservationRoutes);
