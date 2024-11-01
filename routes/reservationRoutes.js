@@ -5,8 +5,8 @@ const reservationController = require('../controllers/reservationController');
 // Route to create a new reservation
 router.post('/', reservationController.createReservation);
 
-// Route to get all reservations (optionally filter by userId via query parameter)
-router.get('/', reservationController.getReservations);
+// Route to get all reservations
+router.get('/', reservationController.getReservations);  // Ensure getReservations exists
 
 // Route to cancel a reservation
 router.delete('/:id', reservationController.cancelReservation);
