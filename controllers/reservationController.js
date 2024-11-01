@@ -3,34 +3,28 @@ const Gateway = require('../models/Gateway');
 
 // Function to create a new reservation
 exports.createReservation = async (req, res) => {
-    const { gatewayId, userId, timeSlot } = req.body;
-
-    try {
-        // Check if the gateway is already reserved at the given time slot
-        const existingReservation = await Reservation.findOne({ gatewayId, timeSlot });
-        if (existingReservation) {
-            return res.status(400).json({ message: 'This gateway is already reserved for the selected time slot.' });
-        }
-
-        // Create a new reservation
-        const newReservation = new Reservation({ gatewayId, userId, timeSlot });
-        const savedReservation = await newReservation.save();
-
-        res.status(201).json(savedReservation);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  // existing code for creating a reservation
 };
 
-// Function to get all reservations (or filter by user)
+// Function to get all reservations
 exports.getReservations = async (req, res) => {
-    const { userId } = req.query; // Optional query parameter for filtering by user
+  // existing code for fetching reservations
+};
 
-    try {
-        const query = userId ? { userId } : {};
-        const reservations = await Reservation.find(query).populate('gatewayId', 'name'); // Populating with gateway name for convenience
-        res.status(200).json(reservations);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+// Function to cancel a reservation
+exports.cancelReservation = async (req, res) => {
+  try {
+    // Find and delete the reservation
+    const reservation = await Reservation.findByIdAndDelete(req.params.id);
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
     }
+
+    // Update the gateway status to "available"
+    await Gateway.findByIdAndUpdate(reservation.gatewayId, { status: 'available' });
+
+    res.status(200).json({ message: 'Reservation cancelled and gateway status updated' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
