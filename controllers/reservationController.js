@@ -8,9 +8,18 @@ exports.createReservation = async (req, res) => {
 
 // Function to get all reservations
 exports.getReservations = async (req, res) => {
-  // existing code for fetching reservations
-};
-
+    try {
+      // Fetch reservations and populate gatewayId and userId references
+      const reservations = await Reservation.find()
+        .populate('gatewayId', 'name status') // Populate gateway's name and status fields
+        .populate('userId', 'name email'); // Populate user's name and email fields
+  
+      res.status(200).json(reservations);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
 // Function to cancel a reservation
 exports.cancelReservation = async (req, res) => {
   try {
