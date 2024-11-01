@@ -7,8 +7,10 @@ const reservationRoutes = require('./routes/reservationRoutes');
 
 const app = express(); // Initialize Express
 
-// Enable CORS for all routes
-app.use(cors());
+// Enable CORS only for the specific frontend URL
+app.use(cors({
+  origin: 'https://available-gateways-frontend-51573bdecaab0.herokuapp.com', // Replace this with your frontend's Heroku URL
+}));
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
