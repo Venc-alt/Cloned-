@@ -2,7 +2,7 @@ const Reservation = require('../models/Reservation');
 const Gateway = require('../models/Gateway');
 
 // Function to get all reservations
-exports.getReservations = async (req, res) => {
+exports.getReservations = async (_req, res) => {
     try {
         const reservations = await Reservation.find()
             .populate('gatewayId', 'name status')
@@ -16,21 +16,23 @@ exports.getReservations = async (req, res) => {
 // Function to create a new reservation
 exports.createReservation = async (req, res) => {
     const { gatewayId, userId, startTime, endTime } = req.body;
-    const timeSlot = `${startTime} - ${endTime}`; // Combine start and end time
 
     try {
         // Check if the gateway is already reserved for the requested time slot
         const existingReservation = await Reservation.findOne({
             gatewayId,
-            timeSlot
+            $or: [
+                { startTime: { $lt: endTime, $gte: startTime } }, // Conflict if it overlaps with an existing reservation
+                { endTime: { $gt: startTime, $lte: endTime } }
+            ]
         });
 
         if (existingReservation) {
             return res.status(400).json({ message: 'This gateway is already reserved for the selected time slot' });
         }
 
-        // Create a new reservation
-        const reservation = new Reservation({ gatewayId, userId, timeSlot });
+        // Create a new reservation with separate startTime and endTime fields
+        const reservation = new Reservation({ gatewayId, userId, startTime, endTime });
         await reservation.save();
 
         // Update the gateway status to "in use"
