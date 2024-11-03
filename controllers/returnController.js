@@ -10,6 +10,17 @@ exports.getReturns = async (req, res) => {
     }
 };
 
+// Function to create a new return
+exports.createReturn = async (req, res) => {
+    try {
+        const newReturn = new Return(req.body); // Create a new instance using the request body data
+        await newReturn.save(); // Save the new return to the database
+        res.status(201).json(newReturn); // Respond with the newly created return
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Function to update status for multiple returns
 exports.updateMultipleReturnStatuses = async (req, res) => {
     const { returnIds, status } = req.body; // Expect an array of IDs and a status
