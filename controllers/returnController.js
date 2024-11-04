@@ -21,6 +21,29 @@ exports.createReturn = async (req, res) => {
     }
 };
 
+// Function to update a single return's status
+exports.updateReturnStatus = async (req, res) => {
+    const { returnId } = req.params;
+    const { status } = req.body;
+
+    try {
+        const updatedReturn = await Return.findByIdAndUpdate(
+            returnId,
+            { status },
+            { new: true }
+        );
+
+        if (!updatedReturn) {
+            return res.status(404).json({ message: 'Return not found' });
+        }
+
+        res.status(200).json(updatedReturn);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 // Function to update status for multiple returns
 exports.updateMultipleReturnStatuses = async (req, res) => {
     const { returnIds, status } = req.body; // Expect an array of IDs and a status
