@@ -11,7 +11,7 @@ const app = express();
 
 // CORS setup for frontend connection
 app.use(cors({
-  origin: 'https://available-gateways-frontend-51573bdecab0.herokuapp.com0',
+  origin: 'https://available-gateways-frontend-51573bdecab0.herokuapp.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
